@@ -1,8 +1,8 @@
 #!/bin/bash
 
 
-mysql_root_password=xxxxxxxxxxxxxxxxxxxxxR!23
-prestashop_mysql_user_password=vvvvvvvvvvvvvvvvvvvvvvvTra3!
+mysql_root_password=xxxxxxxxxx!!ttttrrrrR!23
+prestashop_mysql_user_password=vvvxxxxxxaaaaa@!5Tra3!
 
 apt update
 if [ $? -ne 0 ]; then
@@ -144,12 +144,22 @@ if [ $? -ne 0 ]; then
 fi
 
 cp default /etc/nginx/sites-available/
+if [ $? -ne 0 ]; then
+        echo "Could not copy default file"
+        exit 1
+fi
+
 chmod 644 /etc/nginx/sites-available/default
 if [ $? -ne 0 ]; then
         echo "Could not set permissions on default file"
         exit 1
 fi
 
+systemctl restart nginx
+if [ $? -ne 0 ]; then
+        echo "Could not restart nginx"
+        exit 1
+fi
 
 
 rm -r temp/

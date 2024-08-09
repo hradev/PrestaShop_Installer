@@ -4,6 +4,9 @@ if [ $? -ne 0 ]; then
         exit 1
 fi
 
+rm -r /var/www/html/install/
+rm -r /var/www/html/docs/ 
+
 chown -R www-data:www-data /var/www/html
 if [ $? -ne 0 ]; then
         echo "Could not set ownership on files"
