@@ -2,7 +2,7 @@
 
 
 mysql_root_password=xxxxxxxxxxxxxxxxxxxxxR!23
-prestashop_mysql_user_password=vvvvvvvvvvvvvvvvvvvvvvvTra3
+prestashop_mysql_user_password=vvvvvvvvvvvvvvvvvvvvvvvTra3!
 
 apt update
 if [ $? -ne 0 ]; then
@@ -52,18 +52,38 @@ if [ $? -ne 0 ]; then
         exit 1
 fi
 
-SQL1="CREATE DATABASE prestashopdb;"
-SQL2="GRANT ALL PRIVILEGES ON prestashopdb.* TO 'prestashop'@'localhost' IDENTIFIED BY '$prestashop_mysql_user_password';"
-SQL3="FLUSH PRIVILEGES;"
+SQL1="DROP DATABASE prestashopdb;CREATE DATABASE prestashopdb;"
+SQL2="CREATE USER 'prestashop'@'localhost' IDENTIFIED BY '$prestashop_mysql_user_password';"
+SQL3="GRANT ALL PRIVILEGES ON prestashopdb.* TO 'prestashop'@'localhost';"
+SQL4="FLUSH PRIVILEGES;"
 
-mysql -u root --password=$mysql_root_password -e "$SQL$SQL2SQL3"
+mysql -u root --password=$mysql_root_password -e "$SQL1"
 if [ $? -ne 0 ]; then
         echo "Could not add the prestashop db user"
         exit 1
 fi
 
-wget https://github.com/PrestaShop/PrestaShop/releases/download/8.1.7/prestashop_8.1.7.zip
+mysql -u root --password=$mysql_root_password -e "$SQL2"
+if [ $? -ne 0 ]; then
+        echo "Could not add the prestashop db user"
+        exit 1
+fi
 
+mysql -u root --password=$mysql_root_password -e "$SQL3"
+if [ $? -ne 0 ]; then
+        echo "Could not add the prestashop db user"
+        exit 1
+fi
+
+mysql -u root --password=$mysql_root_password -e "$SQL4"
+if [ $? -ne 0 ]; then
+        echo "Could not add the prestashop db user"
+        exit 1
+fi
+
+
+
+wget https://github.com/PrestaShop/PrestaShop/releases/download/8.1.7/prestashop_8.1.7.zip
 if [ $? -ne 0 ]; then
         echo "Could not download the  prestashop zip file"
         exit 1
@@ -97,6 +117,41 @@ if [ $? -ne 0 ]; then
         exit 1
 fi
 
+
+apt -y install php php-fpm php-zip php-xml php-curl php-mysql php-gd php-intl php-mbstring
+if [ $? -ne 0 ]; then
+        echo "Could not install php"
+        exit 1
+fi
+
+chown -R www-data:www-data /var/www/html
+if [ $? -ne 0 ]; then
+        echo "Could not change owner on files"
+        exit 1
+fi
+
+find /var/www/html -type d -exec chmod 755 {} ";"
+if [ $? -ne 0 ]; then
+        echo "Could not set permissions on directories"
+        exit 1
+fi
+
+
+find /var/www/html -type f -exec chmod 644 {} ";"
+if [ $? -ne 0 ]; then
+        echo "Could not set permissions on files"
+        exit 1
+fi
+
+
+
+
 rm -r temp/
+rm prestashop_8.1.7.zip
+rm -r /var/www/html/install
+rm -r /var/www/html/docs
+rm /var/www/html/README.md
 
 exit 0
+
+
