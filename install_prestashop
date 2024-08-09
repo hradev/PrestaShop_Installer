@@ -66,7 +66,7 @@ fi
 mysql -u root --password=$mysql_root_password -e "$SQL2"
 if [ $? -ne 0 ]; then
         echo "Could not add the prestashop db user"
-        exit 1
+        #exit 1
 fi
 
 mysql -u root --password=$mysql_root_password -e "$SQL3"
@@ -148,9 +148,6 @@ fi
 
 rm -r temp/
 rm prestashop_8.1.7.zip
-rm -r /var/www/html/install
-rm -r /var/www/html/docs
-rm /var/www/html/README.md
 
 exit 0
 

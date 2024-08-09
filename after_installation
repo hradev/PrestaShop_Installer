@@ -1,0 +1,31 @@
+systemctl stop nginx
+if [ $? -ne 0 ]; then
+        echo "Could not stop nginx"
+        exit 1
+fi
+
+chown -R www-data:www-data /var/www/html
+if [ $? -ne 0 ]; then
+        echo "Could not set ownership on files"
+        exit 1
+fi
+
+find /var/www/html -type d -exec chmod 0755 {} \;
+if [ $? -ne 0 ]; then
+        echo "Could not set permissions on directories"
+        exit 1
+fi
+
+find /var/www/html -type f -exec chmod 0644 {} \;
+if [ $? -ne 0 ]; then
+        echo "Could not set permissions on files"
+        exit 1
+fi
+
+
+systemctl start nginx
+if [ $? -ne 0 ]; then
+        echo "Could not start nginx"
+        exit 1
+fi
+
