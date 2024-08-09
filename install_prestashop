@@ -1,0 +1,68 @@
+#!/bin/bash
+
+
+mysql_root_password=xxxxxxxxxxxxxxxxxxxxxR!23
+prestashop_mysql_user_password=vvvvvvvvvvvvvvvvvvvvvvvTra3
+
+apt update
+if [ $? -ne 0 ]; then
+	echo "Could not run apt update"
+	exit 1
+fi
+
+
+apt upgrade -y
+if [ $? -ne 0 ]; then
+        echo "Could not run apt upgrade"
+        exit 1
+fi
+
+apt install nginx -y
+
+if [ $? -ne 0 ]; then
+        echo "Could not install nginx"
+        exit 1
+fi
+
+sudo apt install mysql-server -y
+
+if [ $? -ne 0 ]; then
+        echo "Could not install mysql-server"
+        exit 1
+fi
+
+mysql -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '$mysql_root_password';"
+if [ $? -ne 0 ]; then
+        echo "Could not alter root user settings"
+        exit 1
+fi
+
+
+
+mysql_secure_installation --password=$mysql_root_password --use-default
+if [ $? -ne 0 ]; then
+        echo "Could not secure mysql-server"
+        exit 1
+fi
+
+
+mysql -u root --password=$mysql_root_password -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH auth_socket;"
+if [ $? -ne 0 ]; then
+        echo "Could not change the auth type back for root"
+        exit 1
+fi
+
+SQL1="CREATE DATABASE prestashopdb;"
+SQL2="GRANT ALL PRIVILEGES ON prestashopdb.* TO 'prestashop'@'localhost' IDENTIFIED BY '$prestashop_mysql_user_password';"
+SQL3="FLUSH PRIVILEGES;"
+
+mysql -u root --password=$mysql_root_password -e "$SQL$SQL2SQL3"
+if [ $? -ne 0 ]; then
+        echo "Could not add the prestashop db user"
+        exit 1
+fi
+
+
+
+
+exit 0
