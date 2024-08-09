@@ -52,32 +52,32 @@ if [ $? -ne 0 ]; then
         exit 1
 fi
 
-SQL1="DROP DATABASE prestashopdb;CREATE DATABASE prestashopdb;"
+SQL1="CREATE DATABASE prestashopdb;"
 SQL2="CREATE USER 'prestashop'@'localhost' IDENTIFIED BY '$prestashop_mysql_user_password';"
 SQL3="GRANT ALL PRIVILEGES ON prestashopdb.* TO 'prestashop'@'localhost';"
 SQL4="FLUSH PRIVILEGES;"
 
 mysql -u root --password=$mysql_root_password -e "$SQL1"
 if [ $? -ne 0 ]; then
-        echo "Could not add the prestashop db user"
+        echo "Could not create database"
         exit 1
 fi
 
 mysql -u root --password=$mysql_root_password -e "$SQL2"
 if [ $? -ne 0 ]; then
-        echo "Could not add the prestashop db user"
+        echo "Could not create the prestashop db user"
         #exit 1
 fi
 
 mysql -u root --password=$mysql_root_password -e "$SQL3"
 if [ $? -ne 0 ]; then
-        echo "Could not add the prestashop db user"
+        echo "Could not grant privileges to the prestashop db user"
         exit 1
 fi
 
 mysql -u root --password=$mysql_root_password -e "$SQL4"
 if [ $? -ne 0 ]; then
-        echo "Could not add the prestashop db user"
+        echo "Could not flush privileges"
         exit 1
 fi
 
@@ -143,6 +143,12 @@ if [ $? -ne 0 ]; then
         exit 1
 fi
 
+cp default /etc/nginx/sites-available/
+chmod 644 /etc/nginx/sites-available/default
+if [ $? -ne 0 ]; then
+        echo "Could not set permissions on default file"
+        exit 1
+fi
 
 
 
