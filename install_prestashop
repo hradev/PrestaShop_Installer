@@ -62,7 +62,41 @@ if [ $? -ne 0 ]; then
         exit 1
 fi
 
+wget https://github.com/PrestaShop/PrestaShop/releases/download/8.1.7/prestashop_8.1.7.zip
+
+if [ $? -ne 0 ]; then
+        echo "Could not download the  prestashop zip file"
+        exit 1
+fi
 
 
+apt install unzip
+if [ $? -ne 0 ]; then
+        echo "Could not install unzip"
+        exit 1
+fi
+
+mkdir temp
+if [ $? -ne 0 ]; then
+        echo "Could not create temp directory"
+
+        exit 1
+fi
+
+unzip prestashop_8.1.7.zip -d temp/
+if [ $? -ne 0 ]; then
+        echo "Could not unzip prestashop zip file"
+        exit 1
+fi
+
+
+cp temp/* /var/www/html
+
+if [ $? -ne 0 ]; then
+        echo "Could not copy files to www directory"
+        exit 1
+fi
+
+rm -r temp/
 
 exit 0
